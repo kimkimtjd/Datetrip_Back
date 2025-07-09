@@ -21,14 +21,26 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Project setup
 
 ```bash
+$ sudo npm install -g @nestjs/cli 
+$ nest --version
+# 사용자 홈 폴더 안에 전역 설치 디렉토리 생성
+mkdir ~/.npm-global
+
+# 전역 설치 경로를 사용자 폴더로 설정
+npm config set prefix '~/.npm-global'
+
+# PATH 환경변수에 해당 경로 추가
+echo 'export PATH=$PATH:~/.npm-global/bin' >> ~/.zshrc
+source ~/.zshrc
 $ npm install
+npm install -g @nestjs/cli
+nest new nest-db-app
+cd nest-db-app
+npm install --save @nestjs/typeorm typeorm mysql2 - mysql 연동
 ```
 
 ## Compile and run the project

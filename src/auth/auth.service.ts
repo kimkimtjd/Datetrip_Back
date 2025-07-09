@@ -12,7 +12,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepo: Repository<User>,
     private jwtService: JwtService,
-  ) {}
+  ) {} 
 
   // 회원가입: 비밀번호는 bcrypt로 암호화
   async signup(email: string, age: string, password: string): Promise<User> {
