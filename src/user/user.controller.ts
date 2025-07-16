@@ -27,7 +27,7 @@ import {
   
     // 전체 유저 리스트 조회 (관리자만 접근 가능)
     @UseGuards(JwtAuthGuard)
-    @Get()
+    @Get('all')
     async findAll(@Req() req: any) {
       if (req.user.role !== 'admin') {
         throw new ForbiddenException('Only admin can access user list');
@@ -37,24 +37,15 @@ import {
   
     // 단일 유저 조회 (본인 또는 관리자만)
     @UseGuards(JwtAuthGuard)
-    @Get(':id')
-    async findOne(
-      @Param('id', ParseIntPipe) id: number,
-      @Req() req: any,
-    ) {
-      const isAdmin = req.user.role === 'admin';
-      const isOwner = req.user.userId === id;
-  
-      if (!isAdmin && !isOwner) {
-        throw new ForbiddenException('Access denied');
-      }
-  
-      return this.userService.findOne(id);
+    @Get()
+    async findOne(@Req() req: any) {
+      const userId = req.user.userId;
+      return this.userService.findOne(userId);
     }
-  
+    
     // 유저 정보 수정 (본인 또는 관리자만)
     @UseGuards(JwtAuthGuard)
-    @Put(':id')
+    @Put()
     async update(
       @Param('id', ParseIntPipe) id: number,
       @Body() body: Partial<{ name: string; age: string; password: string }>,
@@ -72,7 +63,7 @@ import {
   
     // 유저 삭제 (관리자만)
     @UseGuards(JwtAuthGuard)
-    @Delete(':id')
+    @Delete()
     async remove(
       @Param('id', ParseIntPipe) id: number,
       @Req() req: any,

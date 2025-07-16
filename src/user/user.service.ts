@@ -1,7 +1,7 @@
 // src/user/user.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -12,7 +12,11 @@ export class UserService {
   ) {}
 
   async create(data: Partial<User>): Promise<User> {
-    const user = this.userRepo.create(data);
+    // const user = this.userRepo.create(data);
+    const user = this.userRepo.create({
+      ...data,
+      day: new Date().toISOString().slice(0, 10), // 'YYYY-MM-DD' 형식
+    });
     return this.userRepo.save(user);
   }
 

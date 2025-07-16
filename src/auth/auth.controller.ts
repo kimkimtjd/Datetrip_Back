@@ -1,20 +1,46 @@
-// 회원가입과 로그인 API를 담당하는 컨트롤러
+// src/auth/auth.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  // POST /auth/signup : 회원가입
+  /* 
+    회원가입
+    {
+     "name": "홍길동",
+     "email": "test@example.com",
+     "password": "1234",
+     "tel": "01012345678",
+     "age": "29",
+    "day": "2024-10-07"
+    } 
+  */
   @Post('signup')
-  signup(@Body() body: { email: string; age: string; password: string }) {
-    return this.authService.signup(body.email, body.age, body.password);
+  signup(
+    @Body()
+    body: {
+      name: string;
+      email: string;
+      password: string;
+      tel: string;
+      age: string;
+      day: string;
+    },
+  ) {
+    return this.authService.signup(body);
   }
 
-  // POST /auth/login : 로그인
+  /* 
+    로그인
+    {
+     "email": "test@example.com",
+     "password": "1234",
+    } 
+  */
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
-    return this.authService.login(body.email, body.password);
+    return this.authService.login(body);
   }
 }
