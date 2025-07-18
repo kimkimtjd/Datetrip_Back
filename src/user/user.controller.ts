@@ -35,6 +35,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  // 파트너 매칭
   @UseGuards(JwtAuthGuard)
   @Put('connect/:co_uuid')
   async connectPartner(@Param('co_uuid') co_uuid: string, @Req() req: any) {
