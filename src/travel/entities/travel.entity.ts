@@ -7,9 +7,6 @@ export class TravelData {
   id: number;
 
   @Column()
-  uuid_id: string;
-
-  @Column()
   title: string;
 
   @Column('text')

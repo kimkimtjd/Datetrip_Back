@@ -1,15 +1,20 @@
-// JWT 토큰 검증 로직 정의
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {
-     const secret = configService.get<string>('JWT_SECRET');
+    const secret = configService.get<string>('JWT_SECRET');
     if (!secret) {
       throw new Error('JWT_SECRET 환경변수가 설정되어 있지 않습니다.');
     }
@@ -20,13 +25,18 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
     });
   }
 
-  // 유효한 토큰일 경우 실행됨 (req.user에 반환값이 들어감)
+  // 유효한 토큰일 경우 실행됨 → req.user에 반환값이 들어감
   async validate(payload: { sub: number; role: string; email: string }) {
-    console.log('JWT payload:', payload);
-    return {
-      userId: payload.sub,
-      role: payload.role,
-      email: payload.email,
-    };
+   
+    const user = await this.userRepository.findOne({
+      where: { id: payload.sub },
+      relations: ['partner'], // 필요 시 추가
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('유저 정보를 찾을 수 없습니다.');
+    }
+
+    return user; // req.user에 들어감
   }
 }
