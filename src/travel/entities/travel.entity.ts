@@ -18,14 +18,14 @@ export class TravelData {
   @Column()
   date: string;
 
-  // @Column()
-  // address: string;
+  @Column({ nullable: true })  // ✅ 주소 null 허용
+  address: string;
 
-  // @Column()
-  // lat: string;
+  @Column({ nullable: true })  // ✅ 위도 null 허용
+  lat: string;
 
-  // @Column()
-  // lng: string;
+  @Column({ nullable: true })  // ✅ 경도 null 허용
+  lng: string;
 
   @ManyToOne(() => User, (user) => user.travelRecords)
   created_user: User;
