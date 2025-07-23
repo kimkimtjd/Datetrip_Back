@@ -37,9 +37,8 @@ export class TravelService {
           .take(limit)
           .getManyAndCount();
         return { data, total };
-      }
+    }
       
-
     // 특정 여행 기록 조회
     async findByUuid(id: number): Promise<TravelData> {
         const travel = await this.travelDataRepository.findOne({
