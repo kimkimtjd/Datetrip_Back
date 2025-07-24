@@ -23,21 +23,28 @@ export class TravelService {
 
     // 전체 여행 기록 조회 (optionally 사용자별로 필터링 가능)
     async findAll(
-        id: string, // user id
+        id: string,
         page: number,
         limit: number = 10,
+        month?: string,
       ): Promise<{ data: TravelData[]; total: number }> {
-        const [data, total] = await this.travelDataRepository
+        const qb = this.travelDataRepository
           .createQueryBuilder('travel')
           .leftJoinAndSelect('travel.created_user', 'user')
           .leftJoinAndSelect('user.partner', 'partner')
-          .where('user.id = :id OR user.partner_id = :id', { id })
-          .orderBy('travel.id', 'DESC')
+          .where('(user.id = :id OR user.partner_id = :id)', { id });  // <-- 괄호로 묶음
+    
+        if (month) {
+            qb.andWhere('travel.date LIKE :month', { month: `${month}%` });
+        }
+        const [data, total] = await qb
+          .orderBy('travel.date', 'DESC')
           .skip((page - 1) * limit)
           .take(limit)
           .getManyAndCount();
+    
         return { data, total };
-    }
+      }
       
     // 특정 여행 기록 조회
     async findByUuid(id: number): Promise<TravelData> {

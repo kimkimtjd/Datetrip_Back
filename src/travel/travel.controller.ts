@@ -26,7 +26,6 @@ export class TravelController {
         return this.travelService.create(data, user);
     }
 
-
     // 내가 작성한 게시물
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -34,9 +33,10 @@ export class TravelController {
         @Req() req,
         @Query('page') page = 1,
         @Query('limit') limit = 10,
+        @Query('month') month?: string,
     ) {
         const userId = req.user.id;
-        return this.travelService.findAll(userId, Number(page), Number(limit));
+        return this.travelService.findAll(userId, Number(page), Number(limit),month);
     }
 
     // 상세
