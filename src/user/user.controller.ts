@@ -43,11 +43,19 @@ export class UserController {
     return this.userService.connectPartner(myId, co_uuid);
   }
 
+  // 만난일수 변경
+  @UseGuards(JwtAuthGuard)
+  @Put('change/:day')
+  async change_day(@Param('day') day: string, @Req() req: any) {
+    const myId = req.user.userId; // 로그인한 사용자 ID
+    return this.userService.changeDay(myId, day);
+  }
+
   // 단일 유저 조회 (본인 또는 관리자만)
   @UseGuards(JwtAuthGuard)
   @Get()
   async findOne(@Req() req: any) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     return this.userService.findOne(userId);
   }
 

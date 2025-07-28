@@ -27,6 +27,7 @@ export class TravelService {
         page: number,
         limit: number = 10,
         month?: string,
+        hasAddress?: boolean,
       ): Promise<{ data: TravelData[]; total: number }> {
         const qb = this.travelDataRepository
           .createQueryBuilder('travel')
@@ -37,6 +38,10 @@ export class TravelService {
         if (month) {
             qb.andWhere('travel.date LIKE :month', { month: `${month}%` });
         }
+        if (hasAddress) {
+            qb.andWhere('travel.address IS NOT NULL'); // ✅ 주소 있는 것만
+        }
+        
         const [data, total] = await qb
           .orderBy('travel.date', 'DESC')
           .skip((page - 1) * limit)

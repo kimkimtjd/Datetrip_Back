@@ -25,7 +25,11 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.userRepo.findOneBy({ id });
+    const user = await this.userRepo.findOne({
+      where: { id },
+      relations: ['partner'], // ✅ partner 관계 포함
+    });
+  
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
@@ -60,6 +64,31 @@ export class UserService {
     return { message: '파트너가 성공적으로 연결되었습니다.', me: me.id, partner: partner.id };
   }
 
+  async changeDay(myId: number, Day_match: string) {
+    const me = await this.userRepo.findOne({
+      where: { id: myId },
+      relations: ['partner'], // ✅ partner 함께 로딩
+    });
+
+    if (!me) {
+      throw new NotFoundException('사용자 정보를 찾을 수 없습니다.');
+    }
+
+    if (!me.partner) {
+      throw new BadRequestException('파트너가 설정되지 않았습니다.');
+    }
+
+    me.day = Day_match;
+    me.partner.day = Day_match;
+
+    await this.userRepo.save([me, me.partner]);
+
+    return {
+      message: '만난일이 변경되었습니다.',
+      me: me.id,
+      partner: me.partner.id,
+    };
+  }
   
   async remove(id: number): Promise<void> {
     const result = await this.userRepo.delete(id);

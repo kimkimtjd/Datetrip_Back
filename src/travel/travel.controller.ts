@@ -34,9 +34,10 @@ export class TravelController {
         @Query('page') page = 1,
         @Query('limit') limit = 10,
         @Query('month') month?: string,
+        @Query('hasAddress') hasAddress?: string, 
     ) {
         const userId = req.user.id;
-        return this.travelService.findAll(userId, Number(page), Number(limit),month);
+        return this.travelService.findAll(userId, Number(page), Number(limit),month , hasAddress === 'true' , );
     }
 
     // 상세
